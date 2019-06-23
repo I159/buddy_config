@@ -9,8 +9,11 @@ Examples:
 
     >>> class MyConf(metaclass=Config):
     >>>     NAME_OF_A_SETTING_A = "NAME_OF_AN_ENVIRONMENT_VARIABLE_A"
-    >>>     NAME_OF_A_SETTING_C = "NAME_OF_AN_ENVIRONMENT_VARIABLE_C"
+    >>>     NAME_OF_A_SETTING_C = "NAME_OF_AN_ENVIRONMENT_VARIABLE_C", int, lambda x: x ** 2
     >>>     NAME_OF_A_SETTING_B = "NAME_OF_AN_ENVIRONMENT_VARIABLE_B", int
+    >>>     COMBINED_SETTING = (
+    >>>         lambda self: self.NAME_OF_A_SETTING_A + self.NAME_OF_A_SETTING_B
+    >>>     )
 
     >>> my_conf = MyConf(NAME_OF_A_SETTING_A=2)
     >>> print(my_conf.NAME_OF_A_SETTING_A)
@@ -22,7 +25,7 @@ Examples:
     >>>     print(e)
     >>> os.environ["NAME_OF_AN_ENVIRONMENT_VARIABLE_B"] = "1"
     >>> print(my_conf.NAME_OF_A_SETTING_B, type(my_conf.NAME_OF_A_SETTING_B))
-
+    >>> print(my_conf.COMBINED_SETTING)
 """
 import functools
 import inspect
@@ -65,18 +68,20 @@ class Config:
         return wrapper
 
     @staticmethod
-    def _cast_as(cst_type):
-        if not inspect.isclass(cst_type):
-            raise TypeError(f"Casting type must be a class: {cst_type}")
+    def _apply_processor(processor):
+        if not callable(processor):
+            raise TypeError(
+                f"Processor should be a callable — a class or a function: {processor}"
+            )
 
-        def _cast(setting_func):
+        def _apply(setting_func):
             @functools.wraps(setting_func)
             def wrapper(self):
-                return cst_type(setting_func(self))
+                return processor(setting_func(self))
 
             return wrapper
 
-        return _cast
+        return _apply
 
     @classmethod
     def _make_setting_prop(cls, setting_name, var_name):
@@ -94,15 +99,17 @@ class Config:
         for setting_name, v in attrs.items():
             if setting_name.isupper():
                 if isinstance(v, tuple):
-                    var_name, cast_type = v
+                    var_name = v[0]
+                    pre_processors = v[1:]
                 elif isinstance(v, str):
                     var_name = v
-                    cast_type = None
+                    pre_processors = None
 
                 if not callable(v):
                     _setting_getter = cls._make_setting_prop(setting_name, var_name)
-                    if cast_type:
-                        _setting_getter = cls._cast_as(cast_type)(_setting_getter)
+                    if pre_processors:
+                        for i in pre_processors:
+                            _setting_getter = cls._apply_processor(i)(_setting_getter)
                 else:
                     _setting_getter = v
                 _setting_getter = property(_setting_getter)
