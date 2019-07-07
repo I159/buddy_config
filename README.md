@@ -21,7 +21,7 @@ VAR_A = os.environ['VAR_A']
 module_a.py
 
 ```
-from . impost *
+from . import *
 
 def a():
     b(VAR_A)
