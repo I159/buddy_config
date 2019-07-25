@@ -41,6 +41,10 @@ the values already loaded to the memory. Therefor mock will not work. And the mo
 part that this issue is not solved in the most of advanced configuration libraries. So
 this is the first issue which solved here by Buddy Config.
 
+## Installation
+
+    pip install buddy_config
+
 ## Getting started
 
 Buddy Config aims to be as declarative as possible.
