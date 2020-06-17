@@ -34,9 +34,13 @@ import re
 
 class Boolean:
     def __call__(self, value):
-        if not re.match(r"^true|false|0|1$", value, re.IGNORECASE):
-            raise ValueError("The setting couldn't be converted to boolean.")
-        return bool(re.match(r"true|1", value, re.IGNORECASE))
+        if isinstance(value, str):
+            if not re.match(r"^true|false|0|1$", value, re.IGNORECASE):
+                raise ValueError("The environment variable is not boolean convertible.")
+            return bool(re.match(r"true|1", value, re.IGNORECASE))
+        elif isinstance(value, bool):
+            return value
+        raise ValueError("The default value is not boolean convertible.")
 
 
 class ConfigurationError(Exception):
