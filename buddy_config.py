@@ -29,6 +29,14 @@ Examples:
 """
 import functools
 import os
+import re
+
+
+class Boolean:
+    def __call__(self, value):
+        if not re.match(r"^true|false|0|1$", value, re.IGNORECASE):
+            raise ValueError("The setting couldn't be converted to boolean.")
+        return bool(re.match(r"true|1", value, re.IGNORECASE))
 
 
 class ConfigurationError(Exception):
@@ -62,7 +70,7 @@ class Config:
             except KeyError:
                 raise ConfigurationError(setting_func.var_name, setting_func.__name__)
             else:
-                if not res and setting_func.var_name not in self._defaults:
+                if res is None:
                     raise ConfigurationError(
                         setting_func.var_name, setting_func.__name__
                     )
@@ -92,7 +100,7 @@ class Config:
     @staticmethod
     def _apply_type(type_):
         """Cast a setting to a type."""
-        if not issubclass(type_, (int, float, str, bytes)):
+        if not issubclass(type_, (int, float, str, bytes, bool)):
             raise TypeError(
                 "Cast type must be a pure data type: int, float, str or bytes."
                 "Actual type is: {}".format(type(type_))
@@ -101,6 +109,9 @@ class Config:
         def _apply(setting_func):
             @functools.wraps(setting_func)
             def wrapper(self):
+                nonlocal type_
+                if issubclass(type_, bool):
+                    type_ = Boolean()
                 return type_(setting_func(self))
 
             return wrapper
