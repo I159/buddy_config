@@ -7,7 +7,7 @@ class TestTypes(unittest.TestCase):
     @mock.patch.dict("os.environ", {"BOOL_VALUE": "tRue"})
     def test_boolean_conversion(self):
         class MyConf(metaclass=buddy_config.Config):
-            BOOL_VALUE = "BOOL_VALUE", buddy_config.Boolean
+            BOOL_VALUE = "BOOL_VALUE", bool
 
         conf = MyConf()
         self.assertTrue(conf.BOOL_VALUE)
@@ -17,7 +17,7 @@ class TestTypes(unittest.TestCase):
     def test_non_convertable_custom_type(self):
 
         class MyConf(metaclass=buddy_config.Config):
-            BOOL_VALUE = "BOOL_VALUE", buddy_config.Boolean
+            BOOL_VALUE = "BOOL_VALUE", bool
 
         conf = MyConf()
         with self.assertRaises(ValueError):

@@ -32,23 +32,11 @@ import os
 import re
 
 
-class BuddyCustomType:
-    _value = None
-
-    def __call__(self):
-        if not isinstance(self._value, (int, float, str, bytes)): # bool() is instance of int.
-            raise TypeError(
-                "Custom type return value must be a pure data type: int, float, str or "
-                "bytes. Actual type is: {}".format(type(self._value))
-            )
-        return self._value
-
-
-class Boolean(BuddyCustomType):
-    def __init__(self, value):
+class Boolean:
+    def __call__(self, value):
         if not re.match(r"^true|false|0|1$", value, re.IGNORECASE):
             raise ValueError("The setting couldn't be converted to boolean.")
-        self._value = bool(re.match(r"true|1", value, re.IGNORECASE))
+        return bool(re.match(r"true|1", value, re.IGNORECASE))
 
 
 class ConfigurationError(Exception):
@@ -112,7 +100,7 @@ class Config:
     @staticmethod
     def _apply_type(type_):
         """Cast a setting to a type."""
-        if not issubclass(type_, (int, float, str, bytes, BuddyCustomType)):
+        if not issubclass(type_, (int, float, str, bytes, bool)):
             raise TypeError(
                 "Cast type must be a pure data type: int, float, str or bytes."
                 "Actual type is: {}".format(type(type_))
@@ -121,8 +109,10 @@ class Config:
         def _apply(setting_func):
             @functools.wraps(setting_func)
             def wrapper(self):
-                res_val = type_(setting_func(self))
-                return res_val() if isinstance(type_, BuddyCustomType) else res_val
+                nonlocal type_
+                if issubclass(type_, bool):
+                    type_ = Boolean()
+                return type_(setting_func(self))
 
             return wrapper
 
