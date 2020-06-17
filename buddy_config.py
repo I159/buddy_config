@@ -82,7 +82,7 @@ class Config:
             except KeyError:
                 raise ConfigurationError(setting_func.var_name, setting_func.__name__)
             else:
-                if not res and setting_func.var_name not in self._defaults:
+                if res is None:
                     raise ConfigurationError(
                         setting_func.var_name, setting_func.__name__
                     )
