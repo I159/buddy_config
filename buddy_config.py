@@ -36,7 +36,7 @@ class BuddyCustomType:
     _value = None
 
     def __call__(self):
-        if not issubclass(self._value, (int, float, str, bytes)):
+        if not isinstance(self._value, (int, float, str, bytes)): # bool() is instance of int.
             raise TypeError(
                 "Custom type return value must be a pure data type: int, float, str or "
                 "bytes. Actual type is: {}".format(type(self._value))
