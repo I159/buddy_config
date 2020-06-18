@@ -13,6 +13,14 @@ class TestTypes(unittest.TestCase):
         conf = MyConf()
         self.assertTrue(conf.BOOL_VALUE)
 
+    @mock.patch.dict("os.environ", {"BOOL_VALUE": "0"})
+    def test_boolean_conversion_default_and_var(self):
+        class MyConf(metaclass=buddy_config.Config):
+            BOOL_VALUE = "BOOL_VALUE", bool
+
+        conf = MyConf(BOOL_VALUE=True)
+        self.assertFalse(conf.BOOL_VALUE)
+
     def test_default_boolean(self):
         class MyConf(metaclass=buddy_config.Config):
             BOOL_VALUE = "BOOL_VALUE", bool
