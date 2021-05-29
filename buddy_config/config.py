@@ -145,7 +145,7 @@ class Config:
         def _setting_getter(self):
             if setting_name in self._defaults:
                 return os.getenv(var_name, self._defaults[setting_name])
-            return os.environ[var_name] # Raise an error if no default present
+            return os.environ[var_name]  # Raise an error if no default present
 
         _setting_getter.var_name = var_name
         _setting_getter.__name__ = setting_name
