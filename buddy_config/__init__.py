@@ -1,1 +1,1 @@
-from buddy_config import *
+from .config import *
