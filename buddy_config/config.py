@@ -31,8 +31,6 @@ import functools
 import os
 import re
 
-__all__ = ["Config"]
-
 
 class Boolean:
     def __call__(self, value):

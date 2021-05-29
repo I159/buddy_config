@@ -15,7 +15,7 @@ class TestTypes(unittest.TestCase):
 
     @mock.patch.dict("os.environ", {"BOOL_VALUE": "0"})
     def test_boolean_conversion_default_and_var(self):
-        class MyConf(metaclass=buddy_config.Config):
+        class MyConf(metaclass=config.Config):
             BOOL_VALUE = "BOOL_VALUE", bool
 
         conf = MyConf(BOOL_VALUE=True)
