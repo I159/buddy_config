@@ -25,5 +25,5 @@ setup(
         "Programming Language :: Python :: 3",
         "Programming Language :: Python :: 3.7",
     ],
-    py_modules=["buddy_config"],
+    packages=["buddy_config"],
 )
