@@ -44,3 +44,11 @@ class TestTypes(unittest.TestCase):
         conf = MyConf()
         with self.assertRaises(ValueError):
             conf.BOOL_VALUE
+
+
+class TestConfig(unittest.TestCase):
+    @mock.patch.dict("os.environ", {"VARIABLE_C": "2"})
+    def test_processors(self):
+        class MyConf(metaclass=config.Config):
+            SETTING_C = "VARIABLE_C", int, lambda x: x ** 2
+        self.assertEqual(MyConf().SETTING_C, 4)
