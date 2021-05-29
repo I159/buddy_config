@@ -2,14 +2,9 @@
 Decoupled and lazy library to get settings from an environment variables.
 
 ## Motivation
-Environment variables are the most common way to configure projects, based on Docker,
-hosted on clouds e.t.c. In the end it is secure and simple way. So grab variables from
-an environment is the only feature of the package.
+Environment variables are the most common way to configure projects, based on Docker, hosted on clouds, e.t.c. In the end, it is a secure and simple way. So grab variables from an environment is the only feature of the package.
 
-First issue which becomes obvious at the simplest approach for getting environment
-variables is that attempt to get the environment variables too early. For example an app
-is initialized by tests and you need different values for the settings at different
-tests. But if the values obtained in this way:
+The first issue that becomes obvious at the simplest approach for getting environment variables is attempting to get the environment variables too early. For example, an app is initialized by tests, and you need different values for the settings at different tests. But if the values obtained in this way:
 
 __init__.py
 ```
@@ -37,9 +32,7 @@ class Test(unittest.TestCase):
         ...
 ```
 
-the values already loaded to the memory. Therefor mock will not work. And the most sad
-part that this issue is not solved in the most of advanced configuration libraries. So
-this is the first issue which solved here by Buddy Config.
+The values are already loaded to the memory. Therefore mock will not work. And the saddest part that this issue is not solved in most of the advanced configuration libraries. So this is the first issue solved here by Buddy Config.
 
 ## Installation
 
@@ -55,14 +48,10 @@ Buddy Config aims to be as declarative as possible.
     class MyConf(metaclass=buddy_config.Config):
         NAME_OF_A_SETTING_A = "NAME_OF_AN_ENVIRONMENT_VARIABLE_A", str
 
-This is minimum of declaration that you need to have a setting. Let's pale it out. The
-name of a class attribute is the name of the setting, exactly how you suppose to call it.
-A string at position 0 of the fallowing tuple is a name of an environment variable that
-you are going to retrieve from the environment. And the type class at the position 1
-of the tuple is the type value after it retrieved from the environment. Both values are
-required.
+This is a minimum of declaration that you need to have a setting. Let's pale it out. The name of a class attribute is the name of the setting, exactly how you suppose to call it. A string at position 0 of the following tuple is a name of an environment variable that you will retrieve from the environment. And the type class at position 1 of the tuple is the type value after it is retrieved from the environment. Both values are required.
 
-To use the config you need to instantiate it:
+To use the config, you need to instantiate it:
+
 
     my_conf = MyConfig()
 
@@ -90,11 +79,9 @@ Moreover, you can add pre-processing of retrieved values.
     class MyConf(metaclass=Config):
         NAME_OF_A_SETTING_C = "NAME_OF_AN_ENVIRONMENT_VARIABLE_C", int, lambda x: x ** 2
 
-The optional items of the tuple are pre-processors. Pre-processor is a callable which
-must return a value of int, float, string or bytes value.
+The optional items of the tuple are pre-processors. A pre-processor is a callable that must return a value of int, float, string, or bytes value.
 
-If you need to create a combined setting using values from environment variables, no
-problem, buddy config can do that:
+If you need to create a combined setting using values from environment variables, no problem, buddy config can do that:
 
 
     class MyConf(metaclass=Config):
