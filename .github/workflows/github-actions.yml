@@ -6,5 +6,6 @@ jobs:
     env:
       working-directory: ..
     steps:
+      - uses: actions/checkout@v2
       - run: echo $PWD
       - run: make test
